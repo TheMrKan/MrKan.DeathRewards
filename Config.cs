@@ -19,7 +19,11 @@ namespace MrKan.DeathRewards
             {
                 new Group()
                 {
-                    GroupId = "default",
+                    PermissionGroups = new()
+                    {
+                        "default",
+                        "vip"
+                    },
                     Items = new()
                     {
                         new Item() { Id = 15, Count = 2 }
@@ -31,8 +35,8 @@ namespace MrKan.DeathRewards
 
     public class Group
     {
-        [XmlAttribute]
-        public string GroupId { get; set; }
+        [XmlArrayItem(ElementName = "Group")]
+        public List<string> PermissionGroups { get; set; } = new();
 
         [XmlArrayItem(ElementName = "Item")]
         public List<Item> Items { get; set; } = new();

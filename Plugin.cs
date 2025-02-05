@@ -70,14 +70,17 @@ namespace MrKan.DeathRewards
         /// </summary>
         private Group? GetPlayerGroup(Player player)
         {
-            var playerGroups = R.Permissions.GetGroups(UnturnedPlayer.FromPlayer(player), true).Select(g => g.Id).ToHashSet();
+            var playerGroups = R.Permissions.GetGroups(UnturnedPlayer.FromPlayer(player), true).Select(g => g.Id.ToLower()).ToHashSet();
 
             // Reverse для приоритета нижних групп
             foreach (var group in Enumerable.Reverse(Configuration.Instance.Groups)) 
             {
-                if (playerGroups.Contains(group.GroupId))
+                foreach (var permissionGroup in group.PermissionGroups)
                 {
-                    return group;
+                    if (playerGroups.Contains(permissionGroup.ToLower()))
+                    {
+                        return group;
+                    }
                 }
             }
 
@@ -95,7 +98,7 @@ namespace MrKan.DeathRewards
                     player.inventory.forceAddItem(new SDG.Unturned.Item(item.Id, EItemOrigin.ADMIN), true);
                 }
             }
-            Logger.Log($"Given items of group {group.GroupId} to player {player.channel.owner.playerID.characterName} ({player.channel.owner.playerID.steamID})");
+            Logger.Log($"Given items to player {player.channel.owner.playerID.characterName} ({player.channel.owner.playerID.steamID})");
         }
 
         protected override void Unload()
